@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from "react-router-dom";
 import clipboard from "@/assets/clipboard-check.png";
-
+//evaluation submited by the judge
 function EvaluationSubmittedPage() {
   const [params] = useSearchParams();
   const submissionId = params.get("submissionId");
