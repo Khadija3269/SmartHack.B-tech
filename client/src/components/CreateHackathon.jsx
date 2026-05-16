@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { createHackathon } from "@/lib/store";
-
+//organizer can create hackathon
 function CreateHackathonPage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
