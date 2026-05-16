@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import highfive from "@/assets/highfive.png";
-
+//confirmation that its created by organizer
 function HackathonCreatedPage() {
   return (<div className="min-h-screen bg-white flex flex-col">
       <div className="flex justify-end p-6">
