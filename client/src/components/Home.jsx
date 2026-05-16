@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { SiteHeader } from "@/components/SiteHeader";
 import heroLightbulb from "@/assets/hero-lightbulb.png";
-
 function HomePage() {
   return (<div className="min-h-screen bg-white">
       <SiteHeader active="home" />
