@@ -3,7 +3,7 @@ import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import lockCloud from "@/assets/lock-cloud.png";
 import { currentUser, changePassword, resetPassword } from "@/lib/auth";
-
+//change password for user
 function ChangePasswordPage() {
   const navigate = useNavigate();
   const [oldPassword, setOldPassword] = useState("");
