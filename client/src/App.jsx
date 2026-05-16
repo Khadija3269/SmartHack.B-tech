@@ -25,7 +25,7 @@ import SubmitProject from "./components/SubmitProject.jsx";
 import VerifyCode from "./components/VerifyCode.jsx";
 import ViewSubmissions from "./components/ViewSubmissions.jsx";
 import ScoringConfig from "./components/ScoringConfig.jsx";
-
+//path for all pages
 export default function App() {
   return (
     <BrowserRouter>
