@@ -1,5 +1,5 @@
 import { currentUser } from "@/lib/auth";
-
+//profile on the side showing details
 export function SidebarProfile() {
   const user = currentUser();
 
