@@ -14,7 +14,7 @@ import {
   markRead,
   dismissNotification,
 } from "@/lib/notifications";
-
+//for mentor
 function MentorDashboard() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("Browse Hackathons");
