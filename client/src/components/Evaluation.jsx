@@ -24,7 +24,7 @@ function loadCriteria() {
   } catch {}
   return DEFAULTS;
 }
-
+//evaluateby the judge
 function EvaluationPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
