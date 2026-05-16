@@ -2,6 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { currentUser } from "@/lib/auth";
+
 import {
   deleteSubmission,
   refreshSubmissions,
