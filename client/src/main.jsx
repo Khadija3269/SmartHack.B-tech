@@ -16,7 +16,7 @@ function LoadingScreen() {
     }}>
       Loading HackHub…
     </div>
-  );
+ );
 }
 
 root.render(<LoadingScreen />);
