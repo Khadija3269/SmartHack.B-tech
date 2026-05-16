@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
-
+//scoring for admin to customize
 const STORAGE_KEY = "smarthack.scoring.criteria";
 
 const DEFAULTS = [
