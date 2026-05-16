@@ -318,3 +318,4 @@ export function MentorQA({ hackathon }) {
     </div>
   );
 }
+
