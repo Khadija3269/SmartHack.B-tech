@@ -6,6 +6,7 @@ import { Provider } from "react-redux";
 import { store } from "../redux/store";
 import "@testing-library/jest-dom";
 
+
 global.fetch = vi.fn(() =>
   Promise.resolve({
     json: () =>
