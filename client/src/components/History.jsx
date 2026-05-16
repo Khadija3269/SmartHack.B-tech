@@ -126,7 +126,6 @@ function buildHistory(user) {
     title: "Account created",
     detail: `${user.fullName} joined the platform`,
   });
-
   /* ================= PARTICIPANT ================= */
   if (user.role === "participant") {
     getRegistrations()
