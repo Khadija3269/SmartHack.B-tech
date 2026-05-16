@@ -6,7 +6,6 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { getSmartAnswer } from "./ai.js";
 //
-
 import Users from "./models/Users.js";
 import Hackathon from "./models/Hackathon.js";
 import Registration from "./models/Registration.js";
