@@ -55,7 +55,6 @@ function LoginPage() {
                 Login
               </button>
             </div>
-
             <div className="text-white text-sm text-center mt-6">
               Already have an account?{" "}
               <Link to="/register" className="underline font-semibold">Register now</Link>
