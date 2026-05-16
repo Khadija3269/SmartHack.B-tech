@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import lockCloud from "@/assets/lock-cloud.png";
-
+//recover pass / recieve otp
 function RecoverPasswordPage() {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
