@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getHackathons } from "@/lib/store";
-
+//page for hackathon thats created
 function HackathonsPage() {
   const [items, setItems] = useState([]);
   const [query, setQuery] = useState("");
