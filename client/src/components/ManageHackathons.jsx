@@ -16,7 +16,7 @@ import {
   updateHackathon,
 } from "@/lib/store";
 import { getUsers } from "@/lib/auth";
-
+//manage hackathon pafe
 function ManageHackathonsPage() {
   const [items, setItems] = useState([]);
   const [judges, setJudges] = useState([]);
