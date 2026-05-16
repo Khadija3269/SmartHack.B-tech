@@ -153,7 +153,7 @@ app.post("/api/users/:email/decision", wrap(async (req, res) => {
   else return res.status(400).json({ error: "Invalid decision" });
   await user.save();
 
-  // Notify the user by email
+  // Notify the user by real email
   try {
     if (decision === "approved") {
       await sendEmail({
