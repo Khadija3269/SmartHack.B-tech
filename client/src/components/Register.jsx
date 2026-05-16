@@ -14,7 +14,6 @@ function validateStrongPassword(pw) {
   if (!/[^A-Za-z0-9]/.test(pw)) return "Password must include a symbol.";
   return null;
 }
-
 function suggestStrongPassword() {
   const upper = "ABCDEFGHJKLMNPQRSTUVWXYZ";
   const lower = "abcdefghijkmnpqrstuvwxyz";
