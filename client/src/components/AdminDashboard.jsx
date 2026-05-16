@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SidebarProfile } from "@/components/SidebarProfile";
 import { stats, refreshHackathons, refreshSubmissions, refreshUsers } from "@/lib/store";
-
+//admin dashboard
 function AdminDashboard() {
   const [s, setS] = useState({ hackCount: 0, partCount: 0, subCount: 0, userCount: 0 });
   useEffect(() => { Promise.all([refreshHackathons(), refreshSubmissions(), refreshUsers()]).finally(() => setS(stats())); }, []);
