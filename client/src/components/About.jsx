@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import socialKickoff from "@/assets/social-kickoff.jpg";
 import socialJudges from "@/assets/social-judges.jpg";
 import socialThanks from "@/assets/social-thanks.jpg";
-
+//about our system 
 const announcements = [
   { id: 1, platform: "Instagram", platformColor: "#E1306C", time: "2 hours ago", title: "SmartHack Kickoff!", desc: "Build your teams and submit projects this Friday at Sultan Qaboos University.", link: "View on Instagram", img: socialKickoff },
   { id: 2, platform: "X (Twitter)", platformColor: "#000", time: "Yesterday", title: "Judges Needed!", desc: "Help evaluate projects at the upcoming SmartHack event.", link: "View on X (Twitter)", img: socialJudges },
