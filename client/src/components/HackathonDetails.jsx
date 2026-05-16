@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { MentorQA } from "@/components/MentorQA";
 import { currentUser } from "@/lib/auth";
 import { getHackathon, isJoined, joinHackathon, leaveHackathon } from "@/lib/store";
-
+//hackathon details..
 function HackathonDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
