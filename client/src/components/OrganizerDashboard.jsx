@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SidebarProfile } from "@/components/SidebarProfile";
 import { getHackathons, refreshHackathons, refreshSubmissions, refreshUsers, stats, submissionsForOrganizer } from "@/lib/store";
-
+//for organizer
 function OrganizerDashboard() {
   const [s, setS] = useState({ hackCount: 0, partCount: 0, subCount: 0, userCount: 0 });
   const [activeUsers, setActiveUsers] = useState(0);
