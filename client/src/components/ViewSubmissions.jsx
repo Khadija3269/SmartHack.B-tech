@@ -112,7 +112,7 @@ function ViewSubmissionsPage() {
                   )}
                 </div>
               </div>
-
+              
               <button
                 onClick={() => {
                   if (confirm("Delete submission?")) {
