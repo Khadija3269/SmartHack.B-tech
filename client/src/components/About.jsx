@@ -14,7 +14,7 @@ function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-100">
       <SiteHeader active="about" />
-
+      
       <section className="bg-white max-w-5xl mx-auto px-10 py-8 relative">
         <Link to="/" className="absolute right-6 top-6 text-gray-700 text-2xl">←</Link>
         <h2 className="text-2xl font-bold text-gray-800 mb-3">About</h2>
