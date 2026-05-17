@@ -22,7 +22,7 @@ function LoginPage() {
       setError(err instanceof Error ? err.message : "Login failed.");
     }
   };
-
+  
   const inputClass = "w-full px-4 py-3 rounded-full bg-[#1f3a68] text-white placeholder-white/60 outline-none";
 
   return (
