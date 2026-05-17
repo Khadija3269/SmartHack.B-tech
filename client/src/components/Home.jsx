@@ -28,7 +28,7 @@ function HomePage() {
               <Link to="/login" className="underline font-medium">Log in</Link>
             </p>
           </div>
-
+          
           <div className="flex justify-center">
             <img
               src={heroLightbulb}
