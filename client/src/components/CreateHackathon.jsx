@@ -40,7 +40,7 @@ function CreateHackathonPage() {
   };
 
   const inputClass = "w-full p-2.5 rounded-md border border-gray-300 bg-gray-50 text-sm";
-
+  
   return (
     <div className="min-h-screen bg-white">
       <SiteHeader active="dashboard" />
