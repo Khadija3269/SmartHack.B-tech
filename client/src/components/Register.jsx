@@ -88,7 +88,7 @@ function RegisterPage() {
       setSubmitting(false);
     }
   };
-
+  
   const inputClass =
     "w-full px-4 py-2.5 rounded-full bg-[#1f3a68] text-white outline-none";
   const textareaClass =
