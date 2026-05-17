@@ -38,7 +38,7 @@ function ViewSubmissionsPage() {
       </div>
     );
   }
-
+  
   return (
     <div className="min-h-screen bg-white">
       <SiteHeader active="dashboard" />
