@@ -80,7 +80,7 @@ function HackathonDetailsPage() {
               Submit your project →
             </Link>)}
         </div>
-
+        
         <MentorQA hackathon={hack} />
       </main>
     </div>
