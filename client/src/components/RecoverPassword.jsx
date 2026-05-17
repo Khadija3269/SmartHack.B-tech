@@ -11,7 +11,7 @@ function RecoverPasswordPage() {
 
   const handleSend = async (e) => {
     e.preventDefault();
-
+    
     const trimmedUsername = username.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
