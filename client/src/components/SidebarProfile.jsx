@@ -4,7 +4,7 @@ export function SidebarProfile() {
   const user = currentUser();
 
   if (!user) return null;
-
+  
   return (
     <div className="bg-[#a8c5e8] w-64 p-6 hidden md:flex flex-col min-h-full">
       <div className="flex flex-col items-center">
