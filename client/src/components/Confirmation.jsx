@@ -10,7 +10,7 @@ function ConfirmationPage() {
       >
         ←
       </Link>
-
+    
       <div className="w-full max-w-2xl bg-[#5B8FCF] rounded-3xl shadow-xl p-10 text-center">
         <h1 className="text-white text-2xl md:text-3xl font-bold">
           Your project has been successfully submitted!
