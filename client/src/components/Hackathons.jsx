@@ -52,7 +52,7 @@ function HackathonsPage() {
             🔍
           </span>
         </div>
-
+        
         {/* 📭 Empty state */}
         {filtered.length === 0 ? (
           <p className="text-center text-gray-500">
