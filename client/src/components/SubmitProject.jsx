@@ -62,7 +62,7 @@ function SubmitProjectPage() {
       setFileName("");
       setFileUrl("");
     }
-
+    
     const hack = available.find(h => h.id === hackathonId);
     if (hack?.endDate) {
       setDeadlinePassed(Date.now() > new Date(hack.endDate).getTime());
