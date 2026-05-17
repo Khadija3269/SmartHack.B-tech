@@ -24,7 +24,7 @@ function AdminDashboard() {
           <section className="bg-[#5B8FCF] py-6 text-center">
             <h1 className="text-2xl font-bold text-white">Admin Dashboard</h1>
           </section>
-
+          
           <main className="max-w-5xl mx-auto p-8 w-full">
         <div className="grid grid-cols-2 md:grid-cols-4 bg-[#5B8FCF] rounded-xl overflow-hidden mb-8">
           {tiles.map((t, i) => (<div key={t.label} className={`text-center text-white py-7 ${i < tiles.length - 1 ? "md:border-r border-white/40" : ""}`}>
