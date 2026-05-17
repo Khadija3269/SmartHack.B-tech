@@ -47,7 +47,7 @@ function EvaluationPage() {
 
     if (!s) { setSub(null); return; }
     setSub(s);
-
+    
     const ev = evaluationFor(s.id);
     if (ev) {
       // Hydrate from saved scores object, falling back to legacy fields
