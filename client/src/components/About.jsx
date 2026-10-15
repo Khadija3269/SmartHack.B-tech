@@ -10,6 +10,7 @@ const announcements = [
   { id: 3, platform: "Facebook", platformColor: "#1877F2", time: "2 days ago", title: "Thanks Participants!", desc: "Over 50 innovative projects submitted — congrats to all!", link: "View on Facebook", img: socialThanks },
 ];
 
+
 function AboutPage() {
   return (
     <div className="min-h-screen bg-gray-100">
