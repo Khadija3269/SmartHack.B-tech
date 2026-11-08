@@ -32,5 +32,4 @@ export function SidebarProfile() {
         </div>
       </div>
     </div>
-  );
-}
+  );}
