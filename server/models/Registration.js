@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+
 const RegistrationSchema = new mongoose.Schema({
   hackathonId: { type: String, required: true },
   participantEmail: { type: String, required: true, lowercase: true },
