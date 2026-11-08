@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import winner from "@/assets/winner.png";
-//for confirmation
+
 function ConfirmationPage() {
   return (<main className="min-h-screen flex items-center justify-center bg-white px-4 relative">
       <Link
@@ -11,8 +11,6 @@ function ConfirmationPage() {
         ←
       </Link>
 
-
-    
       <div className="w-full max-w-2xl bg-[#5B8FCF] rounded-3xl shadow-xl p-10 text-center">
         <h1 className="text-white text-2xl md:text-3xl font-bold">
           Your project has been successfully submitted!
