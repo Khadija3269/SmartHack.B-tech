@@ -5,68 +5,64 @@ import {
   evaluateSubmission,
   evaluationFor,
   getHackathon,
+  getScoringCriteria,
   getSubmissions,
+  refreshScoringCriteria,
 } from "@/lib/store";
 
-const STORAGE_KEY = "smarthack.scoring.criteria";
-const DEFAULTS = [
+const FALLBACK_DEFAULTS = [
   { id: "innovation",    name: "Innovation",    weight: 5, description: "Originality and creativity of the idea." },
   { id: "design",        name: "Design",        weight: 5, description: "UI / UX quality and visual appeal." },
   { id: "functionality", name: "Functionality", weight: 5, description: "How well the project works." },
 ];
 
-function loadCriteria() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULTS;
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length) return parsed;
-  } catch {}
-  return DEFAULTS;
-}
-//evaluateby the judge
 function EvaluationPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const submissionId = searchParams.get("submissionId");
 
-  const [criteria, setCriteria] = useState(DEFAULTS);
+  const [criteria, setCriteria] = useState(FALLBACK_DEFAULTS);
   const [sub, setSub] = useState(null);
   const [scores, setScores] = useState({});
   const [feedback, setFeedback] = useState("");
   const [error, setError] = useState("");
   const [readonly, setReadonly] = useState(false);
+  const [loadingCriteria, setLoadingCriteria] = useState(true);
 
   useEffect(() => {
-    const c = loadCriteria();
-    setCriteria(c);
+    refreshScoringCriteria().finally(() => {
+      const c = getScoringCriteria();
+      const finalCriteria = c.length ? c : FALLBACK_DEFAULTS;
+      setCriteria(finalCriteria);
+      setLoadingCriteria(false);
 
-    const s = submissionId
-      ? (getSubmissions() || []).find((x) => x.id === submissionId)
-      : null;
+      const s = submissionId
+        ? (getSubmissions() || []).find((x) => x.id === submissionId)
+        : null;
 
-    if (!s) { setSub(null); return; }
-    setSub(s);
-    
-    const ev = evaluationFor(s.id);
-    if (ev) {
-      // Hydrate from saved scores object, falling back to legacy fields
-      const initial = {};
-      c.forEach((cr) => {
-        if (ev.scores && ev.scores[cr.id] != null) initial[cr.id] = ev.scores[cr.id];
-        else if (ev[cr.id] != null) initial[cr.id] = ev[cr.id];
-        else initial[cr.id] = "";
-      });
-      setScores(initial);
-      setFeedback(ev.feedback || "");
-      setReadonly(true);
-    } else {
-      const blank = {};
-      c.forEach((cr) => { blank[cr.id] = ""; });
-      setScores(blank);
-      setFeedback("");
-      setReadonly(false);
-    }
+      if (!s) { setSub(null); return; }
+      setSub(s);
+
+      const ev = evaluationFor(s.id);
+      if (ev) {
+        // Hydrate from saved scores object, falling back to legacy fields
+        const initial = {};
+        finalCriteria.forEach((cr) => {
+          if (ev.scores && ev.scores[cr.id] != null) initial[cr.id] = ev.scores[cr.id];
+          else if (ev[cr.id] != null) initial[cr.id] = ev[cr.id];
+          else initial[cr.id] = "";
+        });
+        setScores(initial);
+        setFeedback(ev.feedback || "");
+        setReadonly(true);
+      } else {
+        const blank = {};
+        finalCriteria.forEach((cr) => { blank[cr.id] = ""; });
+        setScores(blank);
+        setFeedback("");
+        setReadonly(false);
+      }
+    });
   }, [submissionId]);
 
   const handleSubmit = (e) => {
@@ -123,7 +119,17 @@ function EvaluationPage() {
                 <p><strong>Team:</strong> {sub.teamMembers || "—"}</p>
                 <p><strong>Description:</strong> {sub.description}</p>
                 <p><strong>Category:</strong> {sub.category}</p>
-                {sub.fileName && <p><strong>File:</strong> {sub.fileName}</p>}
+                {sub.githubLink && (
+                  <p><strong>GitHub:</strong> <a href={sub.githubLink} target="_blank" rel="noreferrer" className="text-blue-700 underline">{sub.githubLink}</a></p>
+                )}
+                {sub.demoLink && (
+                  <p><strong>Demo:</strong> <a href={sub.demoLink} target="_blank" rel="noreferrer" className="text-purple-700 underline">{sub.demoLink}</a></p>
+                )}
+                {sub.fileData ? (
+                  <p><strong>File:</strong> <a href={sub.fileData} target="_blank" rel="noreferrer" download={sub.fileName || "submission"} className="text-green-700 underline">📎 {sub.fileName || "Download"}</a></p>
+                ) : sub.fileName ? (
+                  <p><strong>File:</strong> {sub.fileName}</p>
+                ) : null}
               </div>
 
               <div>
