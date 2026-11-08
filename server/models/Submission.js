@@ -8,7 +8,10 @@ const SubmissionSchema = new mongoose.Schema({
   teamMembers: String,
   category: String,
   fileName: String,
+  fileData: { type: String, default: "" }, // base64 data URL, same pattern as user CV uploads
   link: String,
+  githubLink: { type: String, default: "" },
+  demoLink: { type: String, default: "" },
   status: { type: String, enum: ["Submitted", "Evaluated"], default: "Submitted" },
 }, { timestamps: true });
 
