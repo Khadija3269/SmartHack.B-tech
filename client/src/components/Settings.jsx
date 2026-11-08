@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { currentUser, logout, updateProfile, changePassword } from "@/lib/auth";
 import { deleteUser } from "@/lib/store";
 import { usePreferences } from "@/lib/preferences";
-//settings for our system
+
 function SettingsPage() {
   const navigate = useNavigate();
   const { t } = usePreferences();
@@ -79,6 +79,10 @@ function ProfileTab({
   const [username, setUsername] = useState(
     user.username || user.email.split("@")[0],
   );
+  const [editingSkills, setEditingSkills] = useState(false);
+  const [skills, setSkills] = useState((user.skills || []).join(", "));
+  const [editingInterests, setEditingInterests] = useState(false);
+  const [interests, setInterests] = useState((user.interests || []).join(", "));
   const [picture, setPicture] = useState(
     localStorage.getItem(`smarthack_avatar_${user.email}`),
   );
@@ -129,6 +133,26 @@ function ProfileTab({
       setUser(next);
       setEditingUsername(false);
       flash("✓ Username updated");
+    } catch (e) { flash(e.message); }
+  };
+
+  const csvToList = (s) => s.split(",").map((x) => x.trim()).filter(Boolean);
+
+  const saveSkills = async () => {
+    try {
+      const next = await updateProfile(user.email, { skills: csvToList(skills) });
+      setUser(next);
+      setEditingSkills(false);
+      flash("✓ Skills updated");
+    } catch (e) { flash(e.message); }
+  };
+
+  const saveInterests = async () => {
+    try {
+      const next = await updateProfile(user.email, { interests: csvToList(interests) });
+      setUser(next);
+      setEditingInterests(false);
+      flash("✓ Interests updated");
     } catch (e) { flash(e.message); }
   };
 
@@ -239,6 +263,55 @@ function ProfileTab({
           <InlineChangePassword userEmail={user.email} flash={flash} />
         </Row>
       </div>
+
+      {user.role === "participant" && (
+        <>
+          <h3 className="text-xl font-bold mt-8 mb-1">Team matching</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Used to suggest compatible teammates on hackathons you join. Separate entries with commas.
+          </p>
+          <div className="divide-y border-y">
+            <Row label="Skills">
+              {editingSkills ? (
+                <div className="flex gap-2 flex-1">
+                  <input
+                    value={skills}
+                    onChange={(e) => setSkills(e.target.value)}
+                    placeholder="e.g. React, Python, UI design"
+                    className="border px-3 py-1 rounded flex-1"
+                  />
+                  <button onClick={saveSkills} className="bg-[#5B8FCF] text-white px-3 py-1 rounded text-sm">Save</button>
+                  <button onClick={() => { setSkills((user.skills || []).join(", ")); setEditingSkills(false); }} className="text-xs text-gray-500 underline">Cancel</button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <span>{(user.skills || []).length ? user.skills.join(", ") : <span className="text-gray-400 italic">none yet</span>}</span>
+                  <button onClick={() => setEditingSkills(true)} className="text-xs text-[#5B8FCF] underline">Edit</button>
+                </div>
+              )}
+            </Row>
+            <Row label="Interests">
+              {editingInterests ? (
+                <div className="flex gap-2 flex-1">
+                  <input
+                    value={interests}
+                    onChange={(e) => setInterests(e.target.value)}
+                    placeholder="e.g. Healthcare, Fintech, Gaming"
+                    className="border px-3 py-1 rounded flex-1"
+                  />
+                  <button onClick={saveInterests} className="bg-[#5B8FCF] text-white px-3 py-1 rounded text-sm">Save</button>
+                  <button onClick={() => { setInterests((user.interests || []).join(", ")); setEditingInterests(false); }} className="text-xs text-gray-500 underline">Cancel</button>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <span>{(user.interests || []).length ? user.interests.join(", ") : <span className="text-gray-400 italic">none yet</span>}</span>
+                  <button onClick={() => setEditingInterests(true)} className="text-xs text-[#5B8FCF] underline">Edit</button>
+                </div>
+              )}
+            </Row>
+          </div>
+        </>
+      )}
 
       <div className="flex justify-end mt-6">
         <button onClick={handleDelete} className="bg-red-600 text-white font-semibold rounded px-5 py-2 hover:opacity-90">
