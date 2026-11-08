@@ -2,11 +2,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { currentUser } from "@/lib/auth";
-
 import {
   deleteSubmission,
   refreshSubmissions,
   refreshHackathons,
+  refreshUsers,
   submissionsForOrganizer,
   getHackathon,
 } from "@/lib/store";
@@ -21,9 +21,10 @@ function ViewSubmissionsPage() {
   useEffect(() => {
     const user = currentUser();
     if (!user) { navigate("/login"); return; }
+    if (!["admin", "organizer"].includes(user.role)) { navigate("/"); return; }
 
     // Re-fetch latest data from server then render
-    Promise.all([refreshSubmissions(), refreshHackathons()])
+    Promise.all([refreshSubmissions(), refreshHackathons(), refreshUsers()])
       .finally(() => {
         refresh();
         setLoading(false);
@@ -38,14 +39,14 @@ function ViewSubmissionsPage() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-white">
       <SiteHeader active="dashboard" />
 
       <header className="bg-[#5B8FCF] px-6 py-4 flex items-center justify-between">
         <h1 className="text-white text-xl font-bold">View Submissions</h1>
-        <Link to="/organizer-dashboard" className="text-white text-2xl">←</Link>
+        <Link to={currentUser()?.role === "admin" ? "/admin-dashboard" : "/organizer-dashboard"} className="text-white text-2xl">←</Link>
       </header>
 
       <main className="max-w-4xl mx-auto p-8 space-y-4">
@@ -71,7 +72,7 @@ function ViewSubmissionsPage() {
 
                 <p className="text-sm">
                   <span className="font-semibold">Hackathon:</span>{" "}
-                  {h?.title || "—"}
+                  {h?.title || "—"}{h?.category ? ` (${h.category})` : ""}
                 </p>
 
                 <p className="text-sm">
@@ -86,11 +87,24 @@ function ViewSubmissionsPage() {
 
                 <p className="text-sm text-gray-700 mt-2">{s.description}</p>
 
+                <div className="flex gap-4 mt-2">
+                  {s.githubLink && (
+                    <a href={s.githubLink} target="_blank" rel="noreferrer" className="text-sm text-blue-700 font-semibold underline">
+                      💻 GitHub
+                    </a>
+                  )}
+                  {s.demoLink && (
+                    <a href={s.demoLink} target="_blank" rel="noreferrer" className="text-sm text-purple-700 font-semibold underline">
+                      🔗 Demo
+                    </a>
+                  )}
+                </div>
+
                 <div className="mt-3">
-                  {s.fileUrl ? (
+                  {s.fileData ? (
                     <div className="flex gap-3 flex-wrap">
                       <a
-                        href={s.fileUrl}
+                        href={s.fileData}
                         target="_blank"
                         rel="noreferrer"
                         className="text-blue-700 font-semibold underline text-sm"
@@ -98,8 +112,8 @@ function ViewSubmissionsPage() {
                         📄 Open File
                       </a>
                       <a
-                        href={s.fileUrl}
-                        download
+                        href={s.fileData}
+                        download={s.fileName || "submission"}
                         className="text-green-700 font-semibold underline text-sm"
                       >
                         ⬇ Download
@@ -112,7 +126,7 @@ function ViewSubmissionsPage() {
                   )}
                 </div>
               </div>
-              
+
               <button
                 onClick={() => {
                   if (confirm("Delete submission?")) {
