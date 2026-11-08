@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { api } from "@/lib/api";
-import { getUsersWithStatus, setUserStatus, deleteUser, refreshUsers } from "@/lib/store";
+import { getCategories, getUsersWithStatus, setUserStatus, deleteUser, refreshUsers, setOrganizerCategories } from "@/lib/store";
 
 const PRO_ROLES = ["judge", "mentor", "organizer", "admin"];
 const ROLE_OPTIONS = ["all", "participant", "judge", "organizer", "mentor", "admin"];
@@ -11,6 +11,16 @@ function ManageUsersPage() {
   const [users, setUsers] = useState([]);
   const [roleFilter, setRoleFilter] = useState("all");
   const [reviewing, setReviewing] = useState(null);
+  const [catDraft, setCatDraft] = useState([]);
+  const [catMsg, setCatMsg] = useState("");
+  const openReview = (u) => { setReviewing(u); setCatDraft(u.categories || []); setCatMsg(""); };
+  const saveCategories = async () => {
+    try {
+      await setOrganizerCategories(reviewing.email, catDraft);
+      refresh();
+      setCatMsg("Categories saved.");
+    } catch (e) { setCatMsg("Failed: " + (e.message || e)); }
+  };
 
   const refresh = () => setUsers(getUsersWithStatus());
   useEffect(() => { refreshUsers().finally(refresh); }, []);
@@ -101,11 +111,16 @@ function ManageUsersPage() {
                   <div>{u.fullName}</div>
                   <div className="text-xs text-gray-600 font-normal">{u.email}</div>
                 </div>
-                <div className="capitalize">{u.role}</div>
+                <div className="capitalize">
+                  {u.role}
+                  {u.role === "organizer" && (
+                    <div className="text-xs text-gray-600 font-normal normal-case">{(u.categories || []).join(", ") || "no categories"}</div>
+                  )}
+                </div>
                 <div className={`${statusColor(u.status)} font-bold`}>{u.status}</div>
                 <div className="flex flex-col gap-1.5 items-center">
                   {isPro && (
-                    <button onClick={() => setReviewing(u)} className="bg-[#1f3a68] text-white rounded w-28 py-1 text-sm">
+                    <button onClick={() => openReview(u)} className="bg-[#1f3a68] text-white rounded w-28 py-1 text-sm">
                       {isPending ? "Review" : "View"}
                     </button>
                   )}
@@ -140,6 +155,27 @@ function ManageUsersPage() {
               <Field label="Bio" value={reviewing.bio} />
               <Field label="Experience" value={reviewing.experience} />
               <Field label="Reason" value={reviewing.reason} />
+              {reviewing.role === "organizer" && (
+                <div>
+                  <p className="font-bold text-[#1f3a68]">Assigned categories</p>
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {getCategories().map((c) => (
+                      <button key={c} type="button"
+                        onClick={() => setCatDraft((cur) => cur.includes(c) ? cur.filter((x) => x !== c) : [...cur, c])}
+                        className={`px-3 py-1 rounded-full text-sm font-semibold border ${catDraft.includes(c) ? "bg-[#5B8FCF] text-white border-[#5B8FCF]" : "bg-white text-[#1f3a68] border-[#5B8FCF]"}`}>
+                        {catDraft.includes(c) ? "✓ " : ""}{c}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    Missing one? <Link to="/manage-categories" className="text-[#5B8FCF] font-semibold underline">Add a new category</Link>
+                  </p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <button onClick={saveCategories} className="bg-[#1f3a68] text-white px-4 py-1.5 rounded text-sm font-semibold">Save categories</button>
+                    {catMsg && <span className="text-sm text-gray-600">{catMsg}</span>}
+                  </div>
+                </div>
+              )}
               <div>
                 <p className="font-bold text-[#1f3a68]">CV</p>
                 {reviewing.hasCv ? (
@@ -176,4 +212,3 @@ function Field({ label, value }) {
 }
 
 export default ManageUsersPage;
-
