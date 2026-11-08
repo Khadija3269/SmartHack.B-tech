@@ -121,11 +121,12 @@ function buildHistory(user) {
   // ✅ Account created
   out.push({
     id: "account-created",
-    date: Date.now(),
+    date: user.createdAt || Date.now(),
     icon: "👤",
     title: "Account created",
     detail: `${user.fullName} joined the platform`,
   });
+
   /* ================= PARTICIPANT ================= */
   if (user.role === "participant") {
     getRegistrations()
@@ -151,7 +152,7 @@ function buildHistory(user) {
 
         out.push({
           id: `submission-${s.id}`,
-          date: Date.now(),
+          date: s.createdAt || Date.now(),
           icon: "📤",
           title: `Submitted to "${h?.title || "Hackathon"}"`,
           detail: `Submission ID: ${s.id}`,
@@ -193,7 +194,7 @@ function buildHistory(user) {
 
         out.push({
           id: `eval-${e.submissionId}`,
-          date: Date.now(),
+          date: e.createdAt || Date.now(),
           icon: "📝",
           title: "Evaluated submission",
           detail: `Score: ${total}`,
