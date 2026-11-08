@@ -59,7 +59,7 @@ function ParticipantDashboard() {
     dismissNotification(user.email, id);
     refreshNotifs();
   };
-  
+
   const submittedFor = (hid) => subs.find((s) => s.hackathonId === hid);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -203,4 +203,3 @@ function ParticipantDashboard() {
 }
 
 export default ParticipantDashboard;
-
