@@ -1,6 +1,6 @@
 import { Link, useSearchParams } from "react-router-dom";
 import clipboard from "@/assets/clipboard-check.png";
-//evaluation submited by the judge
+
 function EvaluationSubmittedPage() {
   const [params] = useSearchParams();
   const submissionId = params.get("submissionId");
@@ -17,7 +17,7 @@ function EvaluationSubmittedPage() {
         <h1 className="text-white text-4xl md:text-5xl font-bold mb-6">
           Evaluation Submitted
         </h1>
-        
+
         <img
           src={clipboard}
           alt="Clipboard with checks"
