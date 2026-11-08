@@ -1,8 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
-import { createHackathon } from "@/lib/store";
-//organizer can create hackathon
+import { createHackathon, getCategories, myCategories, refreshCategories, refreshUsers } from "@/lib/store";
+import { currentUser } from "@/lib/auth";
+
 function CreateHackathonPage() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -14,11 +15,34 @@ function CreateHackathonPage() {
   const [teamSize, setTeamSize] = useState("2–5 members");
   const [rewards, setRewards] = useState("Certificates and prizes for the top teams.");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("Mobile");
+  const me = currentUser();
+  const [allowed, setAllowed] = useState(myCategories());
+  const [category, setCategory] = useState(allowed[0] || "");
+  const [submissionDeadline, setSubmissionDeadline] = useState("");
+  const [timeline, setTimeline] = useState([{ label: "", date: "" }]);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    // Pull the latest category assignment (an admin may have changed it).
+    Promise.all([refreshUsers(), refreshCategories()]).finally(() => {
+      const cats = myCategories();
+      setAllowed(cats);
+      setCategory((cur) => (cats.includes(cur) ? cur : cats[0] || ""));
+    });
+  }, []);
+
+  const updateTimelineRow = (i, field, value) => {
+    setTimeline((rows) => rows.map((r, idx) => idx === i ? { ...r, [field]: value } : r));
+  };
+  const addTimelineRow = () => setTimeline((rows) => [...rows, { label: "", date: "" }]);
+  const removeTimelineRow = (i) => setTimeline((rows) => rows.filter((_, idx) => idx !== i));
 
   const handleCreate = (e) => {
     e.preventDefault();
+    if (!category || !allowed.includes(category)) {
+      setError("⚠️ You can only create hackathons in your assigned categories.");
+      return;
+    }
     if (!name.trim() || !startDate || !endDate || !description.trim()) {
       setError("⚠️ Name, dates, and description are required.");
       return;
@@ -35,12 +59,14 @@ function CreateHackathonPage() {
       rewards,
       description: description.trim(),
       category,
+      submissionDeadline,
+      timeline: timeline.filter((r) => r.label.trim() || r.date),
     });
     navigate("/hackathon-created");
   };
 
   const inputClass = "w-full p-2.5 rounded-md border border-gray-300 bg-gray-50 text-sm";
-  
+
   return (
     <div className="min-h-screen bg-white">
       <SiteHeader active="dashboard" />
@@ -62,9 +88,19 @@ function CreateHackathonPage() {
             <div>
               <label className="block font-bold text-sm mb-2">Category</label>
               <select className={inputClass} value={category} onChange={(e) => setCategory(e.target.value)}>
-                <option>Mobile</option><option>Web</option><option>AI</option>
-                <option>Data Science</option><option>Cybersecurity</option><option>Game Development</option>
+                {allowed.length === 0 && <option value="">No category assigned</option>}
+                {getCategories().filter((c) => allowed.includes(c)).map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
+              {me?.role === "organizer" && (
+                <p className="text-xs text-gray-500 mt-1">
+                  {allowed.length ? "Limited to the categories you were assigned." : "Ask an admin to assign you a category first."}
+                </p>
+              )}
+              {me?.role === "admin" && (
+                <p className="text-xs text-gray-500 mt-1">
+                  Need a new one? <Link to="/manage-categories" className="text-[#5B8FCF] font-semibold underline">Add a category</Link>
+                </p>
+              )}
             </div>
           </div>
 
@@ -104,6 +140,50 @@ function CreateHackathonPage() {
           <div>
             <label className="block font-bold text-sm mb-2">Description</label>
             <textarea className={inputClass} rows={4} value={description} onChange={(e) => setDescription(e.target.value)} />
+          </div>
+
+          <div>
+            <label className="block font-bold text-sm mb-2">Submission Deadline</label>
+            <input
+              type="date"
+              className={inputClass}
+              value={submissionDeadline}
+              onChange={(e) => setSubmissionDeadline(e.target.value)}
+            />
+            <p className="text-xs text-gray-500 mt-1">When participants must submit their project by.</p>
+          </div>
+
+          <div>
+            <label className="block font-bold text-sm mb-2">Event Timeline</label>
+            <div className="space-y-2">
+              {timeline.map((row, i) => (
+                <div key={i} className="flex gap-2 items-center">
+                  <input
+                    className={inputClass}
+                    placeholder="Milestone (e.g. Opening Ceremony)"
+                    value={row.label}
+                    onChange={(e) => updateTimelineRow(i, "label", e.target.value)}
+                  />
+                  <input
+                    type="datetime-local"
+                    className={inputClass}
+                    value={row.date}
+                    onChange={(e) => updateTimelineRow(i, "date", e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeTimelineRow(i)}
+                    className="text-red-500 font-bold px-2"
+                    title="Remove milestone"
+                  >×</button>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={addTimelineRow}
+              className="mt-2 text-sm font-semibold text-[#5B8FCF] hover:underline"
+            >+ Add milestone</button>
           </div>
 
           {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
