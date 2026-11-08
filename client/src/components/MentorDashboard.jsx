@@ -3,23 +3,17 @@ import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SidebarProfile } from "@/components/SidebarProfile";
 import { currentUser } from "@/lib/auth";
-import {
-  leaveHackathon,
-  myJoinedHackathons,
-  mySubmissions,
-  getMentorAssignments,
-} from "@/lib/store";
+import { hackathonsForMentor, refreshMentorAssignments, refreshHackathons } from "@/lib/store";
 import {
   getNotifications,
   markRead,
   dismissNotification,
 } from "@/lib/notifications";
-//for mentor
+
 function MentorDashboard() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState("Browse Hackathons");
+  const [activeTab, setActiveTab] = useState("My Hackathons");
   const [items, setItems] = useState([]);
-  const [subs, setSubs] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
   const user = currentUser();
@@ -29,8 +23,9 @@ function MentorDashboard() {
   };
 
   const refresh = () => {
-    setItems(myJoinedHackathons());
-    setSubs(mySubmissions());
+    Promise.all([refreshHackathons(), refreshMentorAssignments()]).finally(() => {
+      setItems(hackathonsForMentor());
+    });
     refreshNotifs();
   };
 
@@ -42,12 +37,6 @@ function MentorDashboard() {
   useEffect(() => {
     if (activeTab === "Notifications") refreshNotifs();
   }, [activeTab]);
-
-  const handleLeave = (id, title) => {
-    if (!window.confirm(`Leave "${title}"?`)) return;
-    leaveHackathon(id);
-    refresh();
-  };
 
   const handleNotifClick = (n) => {
     markRead(user.email, n.id);
@@ -61,7 +50,6 @@ function MentorDashboard() {
     refreshNotifs();
   };
 
-  const submittedFor = (hid) => subs.find((s) => s.hackathonId === hid);
   const unreadCount = notifications.filter((n) => !n.read).length;
 
   return (
@@ -84,7 +72,7 @@ function MentorDashboard() {
 
           <main className="max-w-3xl mx-auto w-full p-6">
             <div className="flex justify-center mb-6">
-              {["Browse Hackathons", "Notifications"].map((tab) => (
+              {["My Hackathons", "Notifications"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
@@ -104,58 +92,37 @@ function MentorDashboard() {
               ))}
             </div>
 
-            {/* BROWSE HACKATHONS */}
-            {activeTab === "Browse Hackathons" && (
+            {/* MY HACKATHONS — hackathons this mentor has been assigned to by an organizer */}
+            {activeTab === "My Hackathons" && (
               <div className="space-y-4">
                 {items.length === 0 && (
                   <div className="text-center text-gray-500 py-10">
-                    Welcome Mentor, Please guide the participants that are lost.{" "}
-                    <Link to="/hackathons" className="text-[#5B8FCF] underline">
-                      Browse hackathons
-                    </Link>
+                    You haven't been assigned to any hackathons yet. An organizer needs to assign
+                    you as a mentor from Manage Hackathons.
                   </div>
                 )}
-                {items.map((h) => {
-                  const sub = submittedFor(h.id);
-                  return (
-                    <div key={h.id} className="border border-gray-300 rounded-lg p-5 bg-white">
-                      <h3 className="font-bold text-base mb-2">{h.title}</h3>
-                      <p className="text-sm mb-1">
-                        <span className="font-semibold">Status:</span>{" "}
-                        <span className={`font-semibold ${sub ? "text-blue-600" : "text-green-600"}`}>
-                          {sub ? `Submitted (${sub.status})` : "Joined"}
-                        </span>
-                      </p>
-                      <p className="text-sm mb-1">
-                        <span className="font-semibold">Timeline:</span>{" "}
-                        {h.startDate} → {h.endDate}
-                      </p>
-                      <p className="text-sm text-gray-700 mb-3">{h.description}</p>
-                      <div className="flex flex-wrap gap-3">
-                        <Link
-                          to={`/hackathon-details/${h.id}`}
-                          className="bg-black text-white text-xs font-semibold rounded px-4 py-2"
-                        >
-                          View Details
-                        </Link>
-                        {!sub && (
-                          <Link
-                            to={`/submit-project?hackathonId=${h.id}`}
-                            className="bg-white border border-black text-black text-xs font-semibold rounded px-4 py-2"
-                          >
-                            Submit Project
-                          </Link>
-                        )}
-                        <button
-                          onClick={() => handleLeave(h.id, h.title)}
-                          className="bg-red-600 text-white text-xs font-semibold rounded px-4 py-2"
-                        >
-                          Leave
-                        </button>
-                      </div>
+                {items.map((h) => (
+                  <div key={h.id} className="border border-gray-300 rounded-lg p-5 bg-white">
+                    <h3 className="font-bold text-base mb-2">{h.title}</h3>
+                    <p className="text-sm mb-1">
+                      <span className="font-semibold">Status:</span>{" "}
+                      <span className="font-semibold text-green-600">Assigned as mentor</span>
+                    </p>
+                    <p className="text-sm mb-1">
+                      <span className="font-semibold">Timeline:</span>{" "}
+                      {h.startDate} → {h.endDate}
+                    </p>
+                    <p className="text-sm text-gray-700 mb-3">{h.description}</p>
+                    <div className="flex flex-wrap gap-3">
+                      <Link
+                        to={`/hackathon-details/${h.id}`}
+                        className="bg-black text-white text-xs font-semibold rounded px-4 py-2"
+                      >
+                        View Details &amp; Answer Q&amp;A
+                      </Link>
                     </div>
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
 
