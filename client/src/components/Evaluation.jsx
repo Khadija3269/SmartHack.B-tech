@@ -1,14 +1,7 @@
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
-import {
-  evaluateSubmission,
-  evaluationFor,
-  getHackathon,
-  getScoringCriteria,
-  getSubmissions,
-  refreshScoringCriteria,
-} from "@/lib/store";
+import {evaluateSubmission, evaluationFor, getHackathon, getScoringCriteria, getSubmissions, refreshScoringCriteria } from "@/lib/store";
 
 const FALLBACK_DEFAULTS = [
   { id: "innovation",    name: "Innovation",    weight: 5, description: "Originality and creativity of the idea." },
