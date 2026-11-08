@@ -2,21 +2,23 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SidebarProfile } from "@/components/SidebarProfile";
-import { getHackathons, refreshHackathons, refreshSubmissions, refreshUsers, stats, submissionsForOrganizer } from "@/lib/store";
-//for organizer
+import { myCategories, refreshHackathons, refreshRegistrations, refreshSubmissions, refreshUsers, stats, submissionsForOrganizer } from "@/lib/store";
+
 function OrganizerDashboard() {
   const [s, setS] = useState({ hackCount: 0, partCount: 0, subCount: 0, userCount: 0 });
   const [activeUsers, setActiveUsers] = useState(0);
+  const [cats, setCats] = useState(myCategories());
 
   useEffect(() => {
-    Promise.all([refreshHackathons(), refreshSubmissions(), refreshUsers()]).finally(() => {
+    Promise.all([refreshHackathons(), refreshSubmissions(), refreshRegistrations(), refreshUsers()]).finally(() => {
       setS(stats());
+      setCats(myCategories());
       setActiveUsers(new Set(submissionsForOrganizer().map((x) => x.participantEmail)).size);
     });
   }, []);
 
   const tiles = [
-    { value: s.hackCount, label: "Total Hackathons" },
+    { value: s.hackCount, label: "My Hackathons" },
     { value: s.partCount, label: "Total Participants" },
     { value: s.subCount, label: "Submissions" },
     { value: activeUsers, label: "Active users" },
@@ -33,6 +35,10 @@ function OrganizerDashboard() {
           </section>
 
           <main className="flex-1 max-w-5xl mx-auto w-full p-8">
+        <div className="mb-6 rounded-lg bg-blue-50 border border-blue-200 text-[#1f3a68] px-4 py-3 text-sm">
+          <span className="font-semibold">Your categories: </span>
+          {cats.length ? cats.join(", ") : "none assigned yet — an admin needs to assign you a category before you can manage hackathons."}
+        </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           {tiles.map((s) => (
             <div key={s.label} className="bg-[#5B8FCF] text-white rounded-lg py-6 text-center">
@@ -55,6 +61,14 @@ function OrganizerDashboard() {
             <span className="flex items-center gap-3 font-medium"><span className="text-lg">🛠️</span> Manage Hackathons</span>
             <span className="text-gray-400 text-xl">›</span>
           </Link>
+          <Link to="/archive" className="flex items-center justify-between p-5 hover:bg-gray-50">
+            <span className="flex items-center gap-3 font-medium"><span className="text-lg">🗄️</span> Archived Hackathons</span>
+            <span className="text-gray-400 text-xl">›</span>
+          </Link>
+          <Link to="/reports" className="flex items-center justify-between p-5 hover:bg-gray-50">
+            <span className="flex items-center gap-3 font-medium"><span className="text-lg">📊</span> Performance Reports</span>
+            <span className="text-gray-400 text-xl">›</span>
+          </Link>
         </div>
           </main>
         </div>
@@ -62,7 +76,6 @@ function OrganizerDashboard() {
     </div>
   );
 }
-
 
 
 export default OrganizerDashboard;
