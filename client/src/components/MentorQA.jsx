@@ -2,14 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { currentUser } from "@/lib/auth";
 import { notifyDirect } from "@/lib/notifications";
-import {
-  answerQuestion,
-  askQuestion,
-  getQuestions,
-  isJoined,
-  mentorForHackathon,
-  refreshQuestions,
-} from "@/lib/store";
+import {  answerQuestion,  askQuestion,  getQuestions,  isJoined,  mentorForHackathon,  refreshQuestions,} from "@/lib/store";
 import { api } from "@/lib/api";
 
 async function fetchAIAnswer(question, hackathonTitle, hackathonTheme) {
