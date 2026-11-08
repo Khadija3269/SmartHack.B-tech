@@ -15,4 +15,5 @@ const SubmissionSchema = new mongoose.Schema({
   status: { type: String, enum: ["Submitted", "Evaluated"], default: "Submitted" },
 }, { timestamps: true });
 
+
 export default mongoose.model("Submission", SubmissionSchema);
