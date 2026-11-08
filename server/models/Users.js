@@ -16,6 +16,13 @@ const UserSchema = new mongoose.Schema({
   cvName:       { type: String, default: "" },
   cvData:       { type: String, default: "" }, // base64 data URL
   rejectionReason: { type: String, default: "" },
+
+  // Organizers only: the hackathon categories this organizer manages.
+  categories: { type: [String], default: [] },
+
+  // Used by the team-matching recommendation system (participants only)
+  skills:    { type: [String], default: [] },
+  interests: { type: [String], default: [] },
 }, { timestamps: true });
 
 export default mongoose.model("Users", UserSchema);
