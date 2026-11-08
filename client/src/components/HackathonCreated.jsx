@@ -23,5 +23,4 @@ function HackathonCreatedPage() {
     </div>);
 }
 
-
 export default HackathonCreatedPage;
