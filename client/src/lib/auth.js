@@ -27,6 +27,7 @@ export async function saveUser(user) {
     reason: user.reason,
     cvName: user.cvName,
     cvData: user.cvData,
+    categories: user.categories,
   });
   await refreshUsers();
   notifyUserRegistered(cache.users, created);
@@ -34,9 +35,10 @@ export async function saveUser(user) {
 }
 
 export async function login(email, password) {
-  const { user } = await api.post("/api/login", { email, password });
-  // shape match with old code (fullName)
-  const stored = { ...user, fullName: user.fullName || user.name };
+  const { user, token } = await api.post("/api/login", { email, password });
+  // shape match with old code (fullName), plus the JWT so protected
+  // requests (create/edit hackathon, publish announcement, etc.) work.
+  const stored = { ...user, fullName: user.fullName || user.name, token };
   localStorage.setItem(SESSION_KEY, JSON.stringify(stored));
   return stored;
 }
