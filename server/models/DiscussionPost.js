@@ -7,6 +7,7 @@ const DiscussionPostSchema = new mongoose.Schema({
   authorName: { type: String, default: "" },
   authorRole: { type: String, default: "participant" },
   message: { type: String, required: true },
-}, { timestamps: true });
+}, 
+{ timestamps: true });
 
 export default mongoose.model("DiscussionPost", DiscussionPostSchema);
