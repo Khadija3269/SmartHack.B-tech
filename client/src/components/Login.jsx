@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { dashboardPathFor, login } from "@/lib/auth";
 import authSide from "@/assets/auth-side.png";
 
+
 function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
