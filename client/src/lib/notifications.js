@@ -24,7 +24,6 @@ const DEFAULT_PREFS = {
 };
 
 // ── Prefs (per user) ──────────────────────────────────────────────────────────
-
 export function getNotifPrefs(email) {
   if (!email) return { ...DEFAULT_PREFS };
   try {
