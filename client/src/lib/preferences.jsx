@@ -6,7 +6,6 @@ import { setAutoTranslation } from "./i18n/autoTranslate.js";
 const SYS_KEY = "smarthack_settings_system";
 const defaults = { theme: "light", language: "English" };
 const PreferencesContext = createContext(null);
-
 // Minimal dictionary — common UI strings used across pages.
 const dict = {
   English: {},
