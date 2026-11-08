@@ -2,7 +2,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { currentUser } from "@/lib/auth";
-import { getHackathon, myJoinedHackathons, submitProject, updateSubmission, mySubmissions } from "@/lib/store";
+import { getHackathon, isArchived, myJoinedHackathons, submitProject, updateSubmission, mySubmissions } from "@/lib/store";
 
 function SubmitProjectPage() {
   const navigate = useNavigate();
@@ -15,8 +15,10 @@ function SubmitProjectPage() {
   const [desc, setDesc] = useState("");
   const [members, setMembers] = useState("");
   const [category, setCategory] = useState("AI");
+  const [githubLink, setGithubLink] = useState("");
+  const [demoLink, setDemoLink] = useState("");
   const [fileName, setFileName] = useState("");
-  const [fileUrl, setFileUrl] = useState("");          // ← was missing
+  const [fileData, setFileData] = useState("");
   const [error, setError] = useState("");              // ← was missing
   const [alreadySubmitted, setAlreadySubmitted] = useState(false);
   const [existingSubmissionId, setExistingSubmissionId] = useState(null);
@@ -28,7 +30,7 @@ function SubmitProjectPage() {
       navigate("/login");
       return;
     }
-    const joined = myJoinedHackathons();
+    const joined = myJoinedHackathons().filter((h) => !isArchived(h)); // archived events are closed
     setAvailable(joined);
     if (!hackathonId && joined[0]) setHackathonId(joined[0].id);
   }, [navigate]);
@@ -50,8 +52,10 @@ function SubmitProjectPage() {
       setDesc(existing.description || "");
       setMembers(existing.teamMembers || "");
       setCategory(existing.category || "AI");
+      setGithubLink(existing.githubLink || "");
+      setDemoLink(existing.demoLink || "");
       setFileName(existing.fileName || "");
-      setFileUrl(existing.fileUrl || "");
+      setFileData(existing.fileData || "");
     } else {
       setAlreadySubmitted(false);
       setExistingSubmissionId(null);
@@ -59,17 +63,22 @@ function SubmitProjectPage() {
       setDesc("");
       setMembers("");
       setCategory("AI");
+      setGithubLink("");
+      setDemoLink("");
       setFileName("");
-      setFileUrl("");
+      setFileData("");
     }
-    
+
     const hack = available.find(h => h.id === hackathonId);
-    if (hack?.endDate) {
-      setDeadlinePassed(Date.now() > new Date(hack.endDate).getTime());
+    const deadlineSource = hack?.submissionDeadline || hack?.endDate;
+    if (deadlineSource) {
+      setDeadlinePassed(Date.now() > new Date(deadlineSource).getTime());
     } else {
       setDeadlinePassed(false);
     }
   }, [hackathonId, available]);
+
+  const isValidUrl = (v) => !v.trim() || /^https?:\/\/.+/i.test(v.trim());
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -78,6 +87,10 @@ function SubmitProjectPage() {
       return setError("⚠️ Please select a hackathon (you must join one first).");
     if (!title.trim() || !desc.trim())
       return setError("⚠️ Title and description are required.");
+    if (!isValidUrl(githubLink))
+      return setError("⚠️ GitHub link must be a valid URL starting with http:// or https://");
+    if (!isValidUrl(demoLink))
+      return setError("⚠️ Demo link must be a valid URL starting with http:// or https://");
 
     setError("");
 
@@ -87,8 +100,10 @@ function SubmitProjectPage() {
       description: desc.trim(),
       teamMembers: members.trim(),
       category,
+      githubLink: githubLink.trim(),
+      demoLink: demoLink.trim(),
       fileName,
-      fileUrl,
+      fileData,
     };
 
     if (alreadySubmitted && existingSubmissionId) {
@@ -157,6 +172,24 @@ function SubmitProjectPage() {
               />
 
               <input
+                type="url"
+                className={inputClass}
+                placeholder="GitHub Link (https://github.com/...)"
+                value={githubLink}
+                onChange={(e) => setGithubLink(e.target.value)}
+                disabled={deadlinePassed}
+              />
+
+              <input
+                type="url"
+                className={inputClass}
+                placeholder="Demo Link (live site, video, etc.)"
+                value={demoLink}
+                onChange={(e) => setDemoLink(e.target.value)}
+                disabled={deadlinePassed}
+              />
+
+              <input
                 className={inputClass}
                 placeholder="Team Members"
                 value={members}
@@ -192,8 +225,18 @@ function SubmitProjectPage() {
                 onChange={(e) => {
                   const file = e.target.files?.[0];
                   if (!file) return;
-                  setFileName(file.name);
-                  setFileUrl(URL.createObjectURL(file));
+                  if (file.size > 8 * 1024 * 1024) {
+                    setError("⚠️ File must be under 8 MB.");
+                    e.target.value = "";
+                    return;
+                  }
+                  setError("");
+                  const reader = new FileReader();
+                  reader.onload = () => {
+                    setFileName(file.name);
+                    setFileData(String(reader.result || ""));
+                  };
+                  reader.readAsDataURL(file);
                 }}
               />
               {fileName && (
@@ -216,6 +259,12 @@ function SubmitProjectPage() {
                 </p>
               )}
 
+              {!alreadySubmitted && deadlinePassed && (
+                <p className="text-red-600 font-semibold text-sm mt-3 bg-red-100 p-3 rounded border border-red-300">
+                  The submission deadline for this hackathon has passed, so new submissions are no longer accepted.
+                </p>
+              )}
+
               {!deadlinePassed && (
                 <button
                   type="submit"
@@ -231,6 +280,5 @@ function SubmitProjectPage() {
     </div>
   );
 }
-
 
 export default SubmitProjectPage;
